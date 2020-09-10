@@ -95,7 +95,7 @@ void write_audio(LPCNetEncState *st, const short *pcm, const int *noise, FILE *f
     /* Simulate error on excitation. */
     e += noise[k*FRAME_SIZE+i];
     e = IMIN(255, IMAX(0, e));
-    
+
     RNN_MOVE(&st->sig_mem[1], &st->sig_mem[0], LPC_ORDER-1);
     st->sig_mem[0] = p + ulaw2lin(e);
     st->exc_mem = e;
@@ -229,7 +229,7 @@ int main(int argc, char **argv) {
       }
       last_silent = silent;
     }
-    if (count*FRAME_SIZE_5MS>=10000000 && one_pass_completed) break;
+    if (count*FRAME_SIZE_5MS>=10000000 || one_pass_completed) break;
     if (training && ++gain_change_count > 2821) {
       float tmp;
       speech_gain = pow(10., (-20+(rand()%40))/20.);

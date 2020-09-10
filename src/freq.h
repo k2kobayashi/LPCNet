@@ -34,13 +34,22 @@
 
 #define WINDOW_SIZE_5MS (FRAME_SIZE_5MS + OVERLAP_SIZE_5MS)
 
-#define FRAME_SIZE (80*FRAME_SIZE_5MS)
-#define OVERLAP_SIZE (80*OVERLAP_SIZE_5MS)
-#define TRAINING_OFFSET (80*TRAINING_OFFSET_5MS)
-#define WINDOW_SIZE (FRAME_SIZE + OVERLAP_SIZE)
+// #define FRAME_SIZE (120*FRAME_SIZE_5MS)
+// #define OVERLAP_SIZE (120*OVERLAP_SIZE_5MS)
+// #define TRAINING_OFFSET (120*TRAINING_OFFSET_5MS)
+// #define WINDOW_SIZE (FRAME_SIZE + OVERLAP_SIZE)
+// #define FREQ_SIZE (WINDOW_SIZE/2 + 1)
+//
+// #define NB_BANDS 20
+// #define NB_BANDS_1 (NB_BANDS - 1)
+
+#define FRAME_SIZE (256)
+#define OVERLAP_SIZE (256)
+#define TRAINING_OFFSET (128)
+#define WINDOW_SIZE (512)
 #define FREQ_SIZE (WINDOW_SIZE/2 + 1)
 
-#define NB_BANDS 18
+#define NB_BANDS 20
 #define NB_BANDS_1 (NB_BANDS - 1)
 
 void compute_band_energy(float *bandE, const kiss_fft_cpx *X);
