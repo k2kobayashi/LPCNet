@@ -30,6 +30,7 @@
 import lpcnet
 import sys
 import numpy as np
+from pathlib import Path
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
 from ulaw import ulaw2lin, lin2ulaw
@@ -58,6 +59,8 @@ model.summary()
 
 feature_file = sys.argv[1]
 pcm_file = sys.argv[2]     # 16 bit unsigned short PCM samples
+model_dir = Path(sys.argv[3])
+model_dir.mkdir(exist_ok=True, parents=True)
 frame_size = model.frame_size
 nb_features = 55
 nb_used_features = model.nb_used_features
@@ -103,7 +106,7 @@ del pred
 del in_exc
 
 # dump models to disk as we go
-checkpoint = ModelCheckpoint('lpcnet30_384_10_G16_{epoch:02d}.h5')
+checkpoint = ModelCheckpoint(model_dir / 'lpcnet30_384_10_G16_{epoch:02d}.h5')
 
 #Set this to True to adapt an existing model (e.g. on new data)
 adaptation = False

@@ -36,7 +36,7 @@ import numpy as np
 import h5py
 import sys
 
-frame_size = 160
+frame_size = 256
 pcm_bits = 8
 embed_size = 128
 pcm_levels = 2**pcm_bits
@@ -86,7 +86,7 @@ class Sparsify(Callback):
                 #print(thresh, np.mean(mask))
             w[1] = p
             layer.set_weights(w)
-            
+
 
 class PCMInit(Initializer):
     def __init__(self, gain=.1, seed=None):
@@ -130,14 +130,14 @@ def new_lpcnet_model(rnn_units1=384, rnn_units2=16, nb_used_features = 38, train
 
     pembed = Embedding(256, 64, name='embed_pitch')
     cat_feat = Concatenate()([feat, Reshape((-1, 64))(pembed(pitch))])
-    
+
     cfeat = fconv2(fconv1(cat_feat))
 
     fdense1 = Dense(128, activation='tanh', name='feature_dense1')
     fdense2 = Dense(128, activation='tanh', name='feature_dense2')
 
     cfeat = fdense2(fdense1(cfeat))
-    
+
     rep = Lambda(lambda x: K.repeat_elements(x, frame_size, 1))
 
     if use_gpu:
@@ -152,13 +152,13 @@ def new_lpcnet_model(rnn_units1=384, rnn_units2=16, nb_used_features = 38, train
     gru_out1, _ = rnn(rnn_in)
     gru_out2, _ = rnn2(Concatenate()([gru_out1, rep(cfeat)]))
     ulaw_prob = md(gru_out2)
-    
+
     if adaptation:
         rnn.trainable=False
         rnn2.trainable=False
         md.trainable=False
         embed.Trainable=False
-    
+
     model = Model([pcm, feat, pitch], ulaw_prob)
     model.rnn_units1 = rnn_units1
     model.rnn_units2 = rnn_units2
@@ -166,7 +166,7 @@ def new_lpcnet_model(rnn_units1=384, rnn_units2=16, nb_used_features = 38, train
     model.frame_size = frame_size
 
     encoder = Model([feat, pitch], cfeat)
-    
+
     dec_rnn_in = Concatenate()([cpcm, dec_feat])
     dec_gru_out1, state1 = rnn(dec_rnn_in, initial_state=dec_state1)
     dec_gru_out2, state2 = rnn2(Concatenate()([dec_gru_out1, dec_feat]), initial_state=dec_state2)
